@@ -3,6 +3,8 @@ source:
 
 https://supergiant.io/blog/persistent-storage-with-persistent-volumes-in-kubernetes/
 
+## Using hostPath Persistent Volumes in Kubernetes
+
 we’ll create a `PersistentVolume`  using `hostPath`  volume plugin and claim it for the use in the Deployment running Apache HTTP servers. `hostPath`  volumes use a file or directory on the Node and are suitable for the development and testing purposes.
 
 Note: `hostPath`  volumes have certain limitations to watch out. It’s not recommended to use them in production. Also, in order for the `hostPath`  to work, we will need to run a single node cluster.  See the official documentation for more info.
@@ -19,11 +21,8 @@ First, you need to open a shell to the Node in the cluster. Since you are using 
 
 In your shell, create a new directory. Use any directory that does not need root permissions (e.g., user’s home folder if you are on Linux):
 
-1
 `mkdir /home/&lt;user-name&gt;/data`
 Then create the `index.html`  file in this directory containing a custom greeting from the server (note: use the directory you created):
-
-1
 
 `echo 'Hello from the hostPath PersistentVolume!' > /home/<user-name>/data/index.html`
 
