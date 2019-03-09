@@ -83,9 +83,9 @@ spec:
 Our PVC does the following:
 
 filters the volumes labeled “local” to bind our specific hostPath  volume and other hostPath  volumes that might be created later ( spec.selector.matchLabels ) .
-- targets hostPath  volumes that have ReadWriteOnce  access mode ( spec.accessModes ).
-- requests a volume of at least 5Gi ( spec.resources.requests.storage ).
-- First, save this resource definition in the hostpath-pvc.yaml , and then create it similar to what we did with the PV:
+* targets hostPath  volumes that have ReadWriteOnce  access mode ( spec.accessModes ).
+* requests a volume of at least 5Gi ( spec.resources.requests.storage ).
+* First, save this resource definition in the hostpath-pvc.yaml , and then create it similar to what we did with the PV:
 `kubectl create -f hostpath-pvc.yaml `
 `persistentvolumeclaim "hostpath-pvc" created`
 
