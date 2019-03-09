@@ -22,7 +22,7 @@ First, you need to open a shell to the Node in the cluster. Since you are using 
 In your shell, create a new directory. Use any directory that does not need root permissions (e.g., user’s home folder if you are on Linux):
 
 `mkdir /home/&lt;user-name&gt;/data`
-Then create the `index.html`  file in this directory containing a custom greeting from the server (note: use the directory you created):
+Then create the `index.php`  file in this directory containing a custom greeting from the server (note: use the directory you created):
 
 `echo '<?php phpinfo();' > /home/<user-name>/data/index.php`
 
@@ -102,8 +102,8 @@ As you see, our PVC was already bound to the volume of the matching type. Let’
 `kubectl get pv pv-local`
 The response should be something like this:
 ```
-NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS    CLAIM                  STORAGECLASS   REASON    AGE
-pv-local   10Gi       RWO            Retain           Bound     default/hostpath-pvc   local    16m
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY STATUS   CLAIM   STORAGECLASS           REASON    AGE
+pv-local   10Gi       RWO            Retain         Bound            default/hostpath-pvc   local     16m
 ```                
 Did you notice the difference from the previous status of our PV? You’ll see that it is now bound by the claim hostpath-pvc  we just created (the claim is living in the default Kubernetes namespace). That’s exactly what we wanted to achieve!
 
@@ -154,7 +154,7 @@ spec:
   selector:
     app: webapp1
 ```
-As you see, along with the standard deployment parameters like container image and container port, we have also defined a volume named “web” that uses our PersistentVolumeClaim . This volume will be mounted with our custom index.html  at /var/www/html , which is the default webroot directory of LAMP for this Docker Hub image. Also, deployment will have access to 5Gi of data in the hostPath  volume.
+As you see, along with the standard deployment parameters like container image and container port, we have also defined a volume named “web” that uses our PersistentVolumeClaim . This volume will be mounted with our custom `index.php`  at `/var/www/html` , which is the default webroot directory of LAMP for this Docker Hub image. Also, deployment will have access to 5Gi of data in the hostPath  volume.
 
 Save this spec in httpd-deployment.yaml  and create the deployment using the following command:
 
@@ -172,7 +172,7 @@ Mounts:
     ClaimName:  hostpath-pvc
     ReadOnly:   false
 ```
-Along with other details, the output shows that the directory /var/www/html  was mounted from the web (rw) volume and that our PersistentVolumeClaim  was used to provision the storage.
+Along with other details, the output shows that the directory `/var/www/html`  was mounted from the web (rw) volume and that our PersistentVolumeClaim  was used to provision the storage.
 
 Now, let’s verify that our LAMP pods actually serve the index.php  file we created in the first step. To do this, let’s first find the UID of one of the pods and get a shell to the Apache server container running in this pod.
 `kubectl get pods -l app=webapp1`
