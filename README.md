@@ -12,7 +12,7 @@ To complete this example, we used the following prerequisites:
 A Kubernetes cluster deployed with Minikube. Kubernetes version used was 1.10.0.
 A kubectl command line tool installed and configured to communicate with the cluster. See how to install kubectl here.
 
-Step #1 Create a Directory on Your Node
+### Step 1 Create a Directory on Your Node
 First, let’s create a directory on your Node that will be used by the `hostPath`  Volume. This directory will be a webroot of Apache HTTP server.
 
 First, you need to open a shell to the Node in the cluster. Since you are using Minikube, open a shell by running `minikube ssh` .
@@ -29,7 +29,7 @@ Then create the `index.html`  file in this directory containing a custom greetin
 
 ###Step #2 Create a Persistent Volume
 The next thing we need to do is to create a `hostPath`  PersistentVolume  that will be using this directory.
-```
+```shell
 kind: PersistentVolume
 apiVersion: v1
 metadata:
@@ -54,18 +54,18 @@ sets the PV’s access mode to ReadWriteOnce, which allows the volume to be moun
 - configures hostPath  Volume plugin to mount local directory at /home/<user-name>/data
 - Save this spec in the file (e.g hostpath-pv.yaml ) and create the PV running the following command:
 
-# kubectl create -f hostpath-pv.yaml
+`kubectl create -f hostpath-pv.yaml`
 `persistentvolume "pv-local" created`
-# Let’s check whether our PersistentVolume was created:
+Let’s check whether our PersistentVolume was created:
 ```
 NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM     STORAGECLASS   REASON    AGE
 pv-local   10Gi       RWO            Retain           Available             local                    2m
 ```
 This response indicates that the  volume is already available but still does not have any claim bound to it, so let’s create one.
 
-Step #3 Create a PersistentVolumeClaim (PVC) for your PersistentVolume
+### Step 3 Create a PersistentVolumeClaim (PVC) for your PersistentVolume
 The next thing we need to do is to claim our PV using a PersistentVolumeClaim . Using this claim, we can request resources from the volume and make them available to our future pods.
-```
+```shell
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -87,26 +87,29 @@ filters the volumes labeled “local” to bind our specific hostPath  volume an
 - targets hostPath  volumes that have ReadWriteOnce  access mode ( spec.accessModes ).
 - requests a volume of at least 5Gi ( spec.resources.requests.storage ).
 - First, save this resource definition in the hostpath-pvc.yaml , and then create it similar to what we did with the PV:
-# kubectl create -f hostpath-pvc.yaml 
+`kubectl create -f hostpath-pvc.yaml `
 `persistentvolumeclaim "hostpath-pvc" created`
 
 Let’s check the claim running the following command:
-```
-kubectl get pvc hostpath-pvc
-The response should be something like this:
 
+`kubectl get pvc hostpath-pvc`
+The response should be something like this:
+```
 NAME           STATUS    VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 hostpath-pvc   Bound     pv-local   10Gi       RWO            local          29s
+```
 As you see, our PVC was already bound to the volume of the matching type. Let’s verify that the PV we created was actually selected by the claim:
 
-kubectl get pv pv-local
+`kubectl get pv pv-local`
 The response should be something like this:
-
-NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS    CLAIM                  STORAGECLASS   REASON    AGE
-pv-local   10Gi       RWO            Retain           Bound     default/hostpath-pvc   local                    16m
-Did you notice the difference from the previous status of our PV? You’ll see that it is now bound by the claim hostpath-pvc  we just created (the claim is living in the default Kubernetes namespace). That’s exactly what we wanted to achieve!
 ```
-Step #4 Use the PersistentVolumeClaim as a Volume in your Deployment
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS    CLAIM                  STORAGECLASS   REASON    AGE
+pv-local   10Gi       RWO            Retain           Bound     default/hostpath-pvc   local    16m
+```                
+Did you notice the difference from the previous status of our PV? You’ll see that it is now bound by the claim hostpath-pvc  we just created (the claim is living in the default Kubernetes namespace). That’s exactly what we wanted to achieve!
+
+### Step 4 Use the PersistentVolumeClaim as a Volume in your Deployment
+
 Now everything is ready for the use of your hostPath  PV in any pod or deployment of your choice. To do this, we need to create a deployment with a PVC referring to the hostPath  volume. Since we created a PV that mounts a directory with the index.html  file, let’s deploy Apache HTTP server from the Docker Hub repository.
 
 
