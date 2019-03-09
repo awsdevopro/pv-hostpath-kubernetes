@@ -27,7 +27,7 @@ Then create the `index.html`  file in this directory containing a custom greetin
 
 `echo 'Hello from the hostPath PersistentVolume!' > /home/<user-name>/data/index.html`
 
-###Step #2 Create a Persistent Volume
+### Step 2 Create a Persistent Volume
 The next thing we need to do is to create a `hostPath`  PersistentVolume  that will be using this directory.
 ```shell
 kind: PersistentVolume
